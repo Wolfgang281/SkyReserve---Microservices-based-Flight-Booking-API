@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
+import { createAirplane } from "./airplane-service.js";
 
-dotenv.config({ quiet: true });
-
-export const PORT = process.env.PORT || 3000;
+export const AirplaneService = {
+  createAirplane,
+};
