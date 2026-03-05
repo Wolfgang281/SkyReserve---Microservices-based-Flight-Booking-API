@@ -13,7 +13,6 @@ const __dirname = path.dirname(__filename);
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 
-// ✅ Read config.json safely (No import assertion needed)
 const configPath = path.join(__dirname, "..", "config", "config.json");
 const configFile = JSON.parse(fs.readFileSync(configPath, "utf-8"));
 const config = configFile[env];
@@ -21,7 +20,6 @@ const config = configFile[env];
 const db = {};
 let sequelize;
 
-// ✅ Initialize Sequelize
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
@@ -33,7 +31,6 @@ if (config.use_env_variable) {
   );
 }
 
-// ✅ Read all model files
 const files = fs.readdirSync(__dirname).filter((file) => {
   return (
     file.indexOf(".") !== 0 &&
@@ -43,7 +40,6 @@ const files = fs.readdirSync(__dirname).filter((file) => {
   );
 });
 
-// ✅ Proper ESM dynamic import (Windows safe)
 for (const file of files) {
   const filePath = path.join(__dirname, file);
   const module = await import(pathToFileURL(filePath).href);
@@ -51,7 +47,6 @@ for (const file of files) {
   db[model.name] = model;
 }
 
-// ✅ Run associations
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
