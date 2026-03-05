@@ -26,3 +26,71 @@ export const createAirplane = async (data) => {
     );
   }
 };
+
+export const getAllAirplanes = async () => {
+  try {
+    const airplanes = await airplaneRepository.getAll();
+    return airplanes;
+  } catch (error) {
+    throw new AppError(
+      "An error occurred while fetching the airplanes.",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+};
+
+export const getAirplane = async (id) => {
+  try {
+    let airplane = await airplaneRepository.get(id);
+    return airplane;
+  } catch (error) {
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "Airplane not found with the given id.",
+        StatusCodes.NOT_FOUND,
+      );
+    }
+
+    throw new AppError(
+      "An error occurred while fetching the airplane.",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+};
+
+export const destroyAirplane = async (id) => {
+  try {
+    let destroyedAirplane = await airplaneRepository.destroy(id);
+    return destroyedAirplane;
+  } catch (error) {
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "Airplane not found with the given id.",
+        error.statusCode,
+      );
+    }
+    throw new AppError(
+      "An error occurred while deleting the airplane.",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+};
+
+export const updateAirplane = async (id, data) => {
+  try {
+    let updatedAirplane = await airplaneRepository.update(id, data);
+    return updatedAirplane;
+  } catch (error) {
+    console.log("error: ", error);
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "Airplane not found with the given id.",
+        error.statusCode,
+      );
+    }
+    throw new AppError(
+      "An error occurred while updating the airplane.",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+    );
+  }
+};

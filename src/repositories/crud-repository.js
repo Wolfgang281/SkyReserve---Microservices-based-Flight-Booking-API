@@ -1,4 +1,5 @@
-import { Logger } from "../config/index.js";
+import { StatusCodes } from "http-status-codes";
+import AppError from "../utils/errors/app-error.js";
 
 class CrudRepository {
   constructor(model) {
@@ -11,51 +12,52 @@ class CrudRepository {
   }
 
   async destroy(data) {
-    try {
-      const destroyedData = await this.model.destroy({
-        where: {
-          id: data,
-        },
-      });
-      return destroyedData;
-    } catch (error) {
-      Logger.error("Error in CrudRepository - destroy method:", error);
-      throw error;
+    const destroyedData = await this.model.destroy({
+      where: {
+        id: data,
+      },
+    });
+    if (destroyedData === 0) {
+      throw new AppError(
+        "Resource not found with the given id.",
+        StatusCodes.NOT_FOUND,
+      );
     }
+    return destroyedData;
   }
 
-  async get(data) {
-    try {
-      const fetchedData = await this.model.findByPk(data);
-      return fetchedData;
-    } catch (error) {
-      Logger.error("Error in CrudRepository - get method:", error);
-      throw error;
+  async get(id) {
+    const fetchedData = await this.model.findByPk(id);
+    if (!fetchedData) {
+      throw new AppError(
+        "Resource not found with the given id.",
+        StatusCodes.NOT_FOUND,
+      );
     }
+    return fetchedData;
   }
 
   async getAll() {
-    try {
-      const fetchedData = await this.model.findAll();
-      return fetchedData;
-    } catch (error) {
-      Logger.error("Error in CrudRepository - get method:", error);
-      throw error;
+    const fetchedData = await this.model.findAll();
+    if (fetchedData.length === 0) {
+      throw new AppError("No resources found.", StatusCodes.NOT_FOUND);
     }
+    return fetchedData;
   }
 
   async update(id, data) {
-    try {
-      const updatedData = await this.model.update(data, {
-        where: {
-          id: id,
-        },
-      });
-      return updatedData;
-    } catch (error) {
-      Logger.error("Error in CrudRepository - update method:", error);
-      throw error;
+    const updatedData = await this.model.update(data, {
+      where: {
+        id: id,
+      },
+    });
+    if (updatedData[0] === 0) {
+      throw new AppError(
+        "Resource not found with the given id.",
+        StatusCodes.NOT_FOUND,
+      );
     }
+    return updatedData;
   }
 }
 

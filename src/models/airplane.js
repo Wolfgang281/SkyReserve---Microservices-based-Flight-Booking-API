@@ -17,8 +17,18 @@ export default (sequelize, DataTypes) => {
       modelNumber: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          isAlphanumeric: true,
+        },
       },
-      capacity: DataTypes.INTEGER,
+      capacity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          min: 1,
+          max: 1000,
+        },
+      },
     },
     {
       sequelize,
