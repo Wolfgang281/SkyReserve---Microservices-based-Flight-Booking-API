@@ -59,4 +59,7 @@ db.Sequelize = Sequelize;
 await sequelize.authenticate();
 console.log("Database connected successfully");
 
+//! to show dbs
+console.log("All databases:", await sequelize.showAllSchemas());
+
 export default db;
